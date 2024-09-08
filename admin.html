@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الحسابات</title>
+    <style>
+        /* تصميم بسيط للصفحة */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #495057;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        nav a:hover {
+            background-color: #6c757d;
+            transform: scale(1.05);
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        input[type="text"], input[type="button"] {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>إدارة الحسابات</h1>
+    </header>
+    <nav>
+        <a href="index.html">الصفحة الرئيسية</a>
+        <a href="admin-login.html">تسجيل الخروج</a>
+    </nav>
+    <div class="container">
+        <h2>إضافة حساب</h2>
+        <input type="text" id="game-name" placeholder="اسم اللعبة">
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <input type="text" id="password" placeholder="كلمة المرور">
+        <input type="button" value="إضافة" onclick="addAccount()">
+
+        <h2>حذف حساب</h2>
+        <input type="text" id="delete-game-name" placeholder="اسم اللعبة للحذف">
+        <input type="button" value="حذف" onclick="deleteAccount()">
+
+        <h2>قائمة الحسابات</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>اللعبة</th>
+                    <th>اسم المستخدم</th>
+                    <th>كلمة المرور</th>
+                    <th>تعديل</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody id="accounts-table-body">
+                <!-- بيانات الحسابات ستظهر هنا -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function loadAccounts() {
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || { simulation: [], combat: [], Action_Adventure : [] };
+            return accounts;
+        }
+
+        function saveAccounts(accounts) {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+        }
+
+        function renderTable() {
+            const accounts = loadAccounts();
+            const tableBody = document.getElementById('accounts-table-body');
+            tableBody.innerHTML = '';
+
+            Object.keys(accounts).forEach(category => {
+                accounts[category].forEach(account => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${account.game}</td>
+                        <td>${account.username}</td>
+                        <td>${account.password}</td>
+                        <td><button class="edit-btn" onclick="editAccount('${account.game}')">تعديل</button></td>
+                        <td><button class="delete-btn" onclick="deleteSpecificAccount('${account.game}')">حذف</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+
+        function addAccount() {
+            const game = document.getElementById('game-name').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (game && username && password) {
+                const accounts = loadAccounts();
+                const category = prompt('أدخل نوع الحساب (simulation, combat, Action_Adventure):');
+                if (category && accounts[category]) {
+                    accounts[category].push({ game, username, password });
+                    saveAccounts(accounts);
+                    renderTable();
+                } else {
+                    alert('نوع الحساب غير صحيح');
+                }
+            } else {
+                alert('يرجى ملء جميع الحقول');
+            }
+        }
+
+        function deleteAccount() {
+            const game = document.getElementById('delete-game-name').value;
+            if (game) {
+                const accounts = loadAccounts();
+                Object.keys(accounts).forEach(category => {
+                    accounts[category] = accounts[category].filter(account => account.game !== game);
+                });
+                saveAccounts(accounts);
+                renderTable();
+            } else {
+                alert('يرجى إدخال اسم اللعبة للحذف');
+            }
+        }
+
+        function deleteSpecificAccount(gameName) {
+            const accounts = loadAccounts();
+            Object.keys(accounts).forEach(category => {
+                accounts[category] = accounts[category].filter(account => account.game !== gameName);
+            });
+            saveAccounts(accounts);
+            renderTable();
+        }
+
+        function editAccount(gameName) {
+            // يمكن إضافة ميزات تعديل الحساب هنا
+            alert('تعديل الحساب غير مفعل بعد.');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+    </script>
+</body>
+</html>

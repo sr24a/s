@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول إلى الإدارة</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input[type="password"], input[type="button"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>تسجيل الدخول إلى الإدارة</h2>
+        <input type="password" id="admin-password" placeholder="كلمة المرور">
+        <input type="button" value="تسجيل الدخول" onclick="login()">
+        <p id="error-message" class="error"></p>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = '1'; // تعيين كلمة مرور ثابتة هنا
+
+        function login() {
+            const password = document.getElementById('admin-password').value;
+
+            if (password === ADMIN_PASSWORD) {
+                window.location.href = 'admin.html';
+            } else {
+                document.getElementById('error-message').textContent = 'كلمة المرور غير صحيحة';
+            }
+        }
+    </script>
+</body>
+</html>
